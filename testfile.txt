@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/terms/"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+
+  <rdf:Property rdf:about="http://localhost/mapping/https://joinup.ec.europa.eu/asset/cpsv-ap/description/property/test">
+    <dc:isPartOf>
+      <rdfs:Class rdf:about="http://localhost/mapping/https://joinup.ec.europa.eu/asset/cpsv-ap/description/class/test">
+        <dc:isPartOf rdf:resource="https://joinup.ec.europa.eu/asset/cpsv-ap/description"/>
+      </rdfs:Class>
+    </dc:isPartOf>
+
+    <skos:closeMatch rdf:resource="http://localhost/mapping/to_edit_test/property/test"/>
+    <skos:exactMatch rdf:resource="http://localhost/mapping/to_edit_test/property/test"/>
+  </rdf:Property>
+
+  <rdf:Property rdf:about="http://localhost/mapping/to_edit_test/property/test">
+    <dc:isPartOf>
+      <rdfs:Class rdf:about="http://localhost/mapping/to_edit_test/class/test">
+        <dc:isPartOf rdf:resource="http://localhost:8890/to_edit_test"/>
+      </rdfs:Class>
+    </dc:isPartOf>
+
+  </rdf:Property>
+
+  <rdfs:Class rdf:about="http://mapping.semic.eu/def#DataModel">
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+  </rdfs:Class>
+
+  <rdf:Description rdf:about="https://joinup.ec.europa.eu/asset/cpsv-ap/description">
+    <rdf:type rdf:resource="http://mapping.semic.eu/def#DataModel"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://localhost:8890/to_edit_test">
+    <rdf:type rdf:resource="http://mapping.semic.eu/def#DataModel"/>
+  </rdf:Description>
+
+  <rdf:Property rdf:about="http://localhost/mapping/to_edit_test/property/t">
+    <dc:isPartOf>
+      <rdfs:Class rdf:about="http://localhost/mapping/to_edit_test/class/t">
+        <dc:isPartOf rdf:resource="http://localhost:8890/to_edit_test"/>
+      </rdfs:Class>
+    </dc:isPartOf>
+
+  </rdf:Property>
+
+  <rdf:Property rdf:about="http://localhost/mapping/https://joinup.ec.europa.eu/asset/cpsv-ap/description/property/t">
+    <dc:isPartOf>
+      <rdfs:Class rdf:about="http://localhost/mapping/https://joinup.ec.europa.eu/asset/cpsv-ap/description/class/t">
+        <dc:isPartOf rdf:resource="https://joinup.ec.europa.eu/asset/cpsv-ap/description"/>
+      </rdfs:Class>
+    </dc:isPartOf>
+
+    <skos:exactMatch rdf:resource="http://localhost/mapping/to_edit_test/property/t"/>
+  </rdf:Property>
+
+  <rdf:Property rdf:about="http://localhost/mapping/https://joinup.ec.europa.eu/asset/cpsv-ap/description/property/kazak">
+    <dc:isPartOf>
+      <rdfs:Class rdf:about="http://localhost/mapping/https://joinup.ec.europa.eu/asset/cpsv-ap/description/class/kazak">
+        <dc:isPartOf rdf:resource="https://joinup.ec.europa.eu/asset/cpsv-ap/description"/>
+      </rdfs:Class>
+    </dc:isPartOf>
+
+    <skos:narrowMatch>
+      <rdf:Property rdf:about="http://localhost/mapping/to_edit_test/property/kazak">
+        <dc:isPartOf>
+          <rdfs:Class rdf:about="http://localhost/mapping/to_edit_test/class/kazak">
+            <dc:isPartOf rdf:resource="http://localhost:8890/to_edit_test"/>
+          </rdfs:Class>
+        </dc:isPartOf>
+
+      </rdf:Property>
+    </skos:narrowMatch>
+
+  </rdf:Property>
+
+</rdf:RDF>

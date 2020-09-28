@@ -1,0 +1,311 @@
+<?php
+
+/**
+ * @file
+ * Bulk Creator module file.
+ *
+ * This module allows to bulk add content types and fields to the site.
+ */
+define('BULK_PATH', drupal_get_path('module', 'bulk_creator'));
+require_once BULK_PATH . '/bulk_creator.helpers.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function bulk_creator_menu() {
+    $items = array();
+
+    $items['admin/config/content/bulk_creator'] = array(
+        'title' => 'Bulk Creator',
+        'description' => 'Configuration for the Bulk Field and Content Type Creator.',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('bulk_creator_admin_settings'),
+        'access arguments' => array('administer bulk configuration'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'bulk_creator.admin.inc',
+    );
+
+    return $items;
+}
+
+/**
+ * Create a new Content Type with a body field.
+ *
+ * @param string $ct_name
+ *   The machine name of the content type.
+ *   The machine name of the content type can contain only
+ *   lowercase alphanumeric characters and underscores.
+ * @param string $ct_label
+ *   The label of the content type.
+ * @param string $ct_description
+ *   The description of the content type.
+ */
+function bulk_ct_create($ct_name, $ct_label = '', $ct_description = '') {
+    // $ct_name = 'new_type';
+    // Verify the content type does not already exist.
+    // To instead get the node types as objects, use node_type_get_types().
+    if (in_array($ct_name, node_type_get_names())) {
+        // bulk_ct_delete($type_name);
+        return;
+    }
+
+    if ($ct_label == '') {
+        $ct_label = ucwords(str_replace("_", " ", strtolower($ct_name)));
+    }
+
+    // Create the type definition array.
+    $type = array(
+        'type' => $ct_name,
+        'name' => $ct_label,
+        'base' => 'node_content',
+        'description' => $ct_description,
+        'custom' => 1,
+        'modified' => 1,
+        'locked' => 0,
+    );
+    $type_compiled = node_type_set_defaults($type);
+    node_type_save($type_compiled);
+    // Add a body field.
+    node_add_body_field($type_compiled);
+}
+
+/**
+ * Delete a content type.
+ *
+ * @param string $type_name
+ *   The machine name of the content type.
+ */
+function bulk_ct_delete($type_name) {
+    node_type_delete($type_name);
+    variable_del('node_preview_' . $type_name);
+    node_types_rebuild();
+    menu_rebuild();
+}
+
+/**
+ * Create a new field, and a new content type if not existing.
+ *
+ * @param string $content_type_name
+ *   The name of the content type where to attach the new field instance.
+ * @param string $field_type
+ *   The type of the field according to the Drupal Field Types.
+ * @param string $field_name
+ *   The machine name of the field. If you pass here a label it will be
+ *   converted to machine name.
+ * @param string $field_label
+ *   The label of the new field. If left empty this will be computed from
+ *   the field machine name.
+ * @param string $field_description
+ *   The description of the field.
+ * @param bool $field_required
+ *   Tell if the field is required when the instance is compiled.
+ * @param string $field_prefix
+ *   The prefix of the field.
+ */
+function bulk_field_create($content_type_name, $field_type, $field_name, $field_label = '', $field_description = '', $field_required = FALSE, $field_default = '', $field_group = '', $field_prefix = '', $field_suffix = '') {
+
+    // Trimming parameters. Could use map.
+    $content_type_name = trim($content_type_name);
+    $field_type = trim($field_type);
+    $field_name = trim($field_name);
+    $field_label = trim($field_label);
+    $field_description = trim($field_description);
+    $field_default = trim($field_default);
+    $field_group = trim($field_group);
+    $field_prefix = trim($field_prefix);
+    $field_suffix = trim($field_suffix);
+
+    if (empty($content_type_name)) {
+        return;
+    }
+
+    // If the $field_name has the jolly characters [X--Y] unfold it.
+    $match = array();
+    $reg_exp = "/\[.+--.+\]/";
+    if (preg_match($reg_exp, $field_name, $match)) {
+        $range = substr($match[0], 1, -1);
+        $index = explode("--", $range);
+        // Was foreach (range($index[0], $index[1]) as $jolly) {
+        // but I created a most powerful function.
+        foreach (bulk_helper_column_range($index[0], $index[1]) as $jolly) {
+            $field_new_name = preg_replace($reg_exp, $jolly, $field_name);
+
+            $field_new_label = $field_label;
+            if (!empty($field_new_label)) {
+                $field_new_label .= ' ' . $jolly;
+            }
+            bulk_field_create($content_type_name, $field_type, $field_new_name, $field_new_label, $field_description, $field_required, $field_default, $field_group, $field_prefix, $field_suffix);
+        }
+        return;
+    }
+
+    // Check if names are Ok!
+    if ($field_label == '') {
+        $field_label = ucwords(str_replace("_", " ", strtolower($field_name)));
+    }
+    $field_name = bulk_helper_tomachinename($field_name);
+
+    $log_tokens = array(
+        '!ct_name' => $content_type_name,
+        '!field_name' => $field_name,
+        '!field_type' => $field_type);
+
+    // Make sure the field doesn't already exist.
+    if (field_info_field($field_name)) {
+        $message_already_exists = t('Warning, the field !field_name already exists.', $log_tokens);
+        bulk_log($message_already_exists);
+        return;
+    }
+
+    // Make sure the content type exsists, else create it.
+    if (!in_array($content_type_name, node_type_get_names())) {
+        bulk_ct_create($content_type_name);
+    }
+
+    // Create the field.
+    $field = array(
+        'field_name' => $field_name,
+        'type' => $field_type,
+    );
+    field_create_field($field);
+    // Create the instance.
+    $instance = array(
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $content_type_name,
+        'label' => $field_label,
+        'description' => $field_description,
+        'required' => $field_required,
+        'settings' => array(
+            'prefix' => $field_prefix,
+            'suffix' => $field_suffix,
+        ),
+        'default_value' => array(array('value' => $field_default),),
+    );
+    field_create_instance($instance);
+
+    if (!empty($field_group)) {
+        bulk_field_add_to_group($field_name, $content_type_name, $field_group);
+    }
+
+    $message_success = t('[!ct_name] !field_type::!field_name was added successfully.', $log_tokens);
+    bulk_log($message_success, 'status');
+    return $field_name;
+}
+
+/**
+ * Put a field in the cron queue for delete.
+ *
+ * Note that it will delete the field from ALL the bundles.
+ *
+ * @param string $field_name
+ *   The machine name of the field.
+ */
+function bulk_field_delete($field_name) {
+    // This method is here just a placeholder and for API completeness.
+    field_delete_field($field_name);
+    field_purge_batch(5);
+    // To delete just from an instance use field_delete_instance()
+}
+
+/**
+ * Load Bulk Script from a file.
+ *
+ * @param string $file_path
+ *   The path of the file.
+ */
+function bulk_field_create_from_file($file_path) {
+    $file_content = file_get_contents($file_path);
+
+    if ($file_content == NULL) {
+        bulk_log(t('Error while opnening !file_path.', array('!file_path' => $file_path)), 'error');
+        return;
+    }
+
+    bulk_field_create_from_script($file_content);
+}
+
+/**
+ * Run bulk creator from a script.
+ *
+ * @param string $bulk_script
+ *   The Bulk Script.
+ * @param string $bulk_callback
+ *   The name of the callback function.
+ */
+function bulk_field_create_from_script($bulk_script, $bulk_callback = '') {
+    $sep_line = "\n";
+    $sep_field = variable_get('bulk_separator_field', ';');
+
+    // 1) Removing useless stuff.
+    $s_remove = array("\r");
+    $bulk_script_clean = str_replace($s_remove, "", $bulk_script);
+    $lines = explode($sep_line, $bulk_script_clean);
+    foreach ($lines as $line) {
+        $line = trim($line);
+
+        if (empty($line)) {
+            continue;
+        }
+
+        if (substr($line, 0, 1) === "#") {
+            continue;
+        }
+
+        $log_tokens = array('!line' => $line, '!bulk_callback' => $bulk_callback);
+
+        bulk_log(t("Parsing: [!line]", $log_tokens), 'status');
+        $fields = explode($sep_field, $line);
+
+        if (!empty($bulk_callback)) {
+            if (function_exists($bulk_callback)) {
+                $bulk_callback($line);
+            } else {
+                bulk_log(t("The function !bulk_callback is missing! Process stopped.", $log_tokens), 'error');
+                return;
+            }
+
+            continue;
+        }
+
+        if (count($fields) < 3) {
+            bulk_log(t("Missing mandatory parameters in [!line], please read the instructions.", $log_tokens));
+            continue;
+        }
+
+        $f_ct_name = $fields[0];
+        $f_f_type = $fields[1];
+        $f_f_name = $fields[2];
+        $f_f_label = '';
+        $f_f_description = '';
+        $f_f_required = FALSE;
+        $f_f_default = '';
+        $f_f_group = '';
+        $f_f_prefix = '';
+        $f_f_suffix = '';
+
+        if (count($fields) > 3) {
+            $f_f_label = $fields[3];
+        }
+        if (count($fields) > 4) {
+            $f_f_description = $fields[4];
+        }
+        if (count($fields) > 5) {
+            $f_f_required = filter_var($fields[5], FILTER_VALIDATE_BOOLEAN);
+        }
+        if (count($fields) > 6) {
+            $f_f_default = $fields[6];
+        }
+        if (count($fields) > 7) {
+            $f_f_group = $fields[7];
+        }
+        if (count($fields) > 8) {
+            $f_f_prefix = $fields[8];
+        }
+        if (count($fields) > 9) {
+            $f_f_suffix = $fields[9];
+        }
+
+        bulk_field_create($f_ct_name, $f_f_type, $f_f_name, $f_f_label, $f_f_description, $f_f_required, $f_f_default, $f_f_group, $f_f_prefix, $f_f_suffix);
+    }
+}

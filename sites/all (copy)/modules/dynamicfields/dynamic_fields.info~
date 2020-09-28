@@ -1,0 +1,5 @@
+name = Dynamic Fields
+description = add dynamic fields to content type
+package = Custom
+core = 7.x
+dependencies [] = field

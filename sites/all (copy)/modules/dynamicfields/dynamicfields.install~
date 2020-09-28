@@ -1,0 +1,33 @@
+<?php
+
+echo 'test1';
+function dynamic_fields_update_7000() {
+	echo 'test2';
+  $field_name = 'test_field';
+  // Make sure the field doesn't already exist.
+  if (!field_info_field($field_name)) {
+    // Create the field.
+    $field = array(
+      'field_name' => $field_name,
+      'type' => 'text',
+      'title' => 'title',
+      'settings' => array('max_length' => 64),
+    );
+    field_create_field($field);
+
+    // Create the instance.
+    $instance = array( 'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => 'mapping_page',
+      'label' => 'test',
+      'description' => 'The test.',
+      'required' => TRUE,
+    );
+    field_create_instance($instance);
+
+    watchdog('dynamic_fields', t('!field_name was added successfully.', array('!field_name' => $field_name)));
+  }
+  else {
+    watchdog('dynamic_fields', t('!field_name already exists.', array('!field_name' => $field_name)));
+  }
+}

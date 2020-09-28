@@ -1,0 +1,1 @@
+DCAT-BREG|https://www.w3.org/TR/vocab-dcat-2/

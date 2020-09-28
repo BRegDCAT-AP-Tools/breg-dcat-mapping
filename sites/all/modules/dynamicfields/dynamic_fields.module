@@ -1,0 +1,29 @@
+<?php
+
+echo 'test1';
+function dynamic_fields_update_7000() {
+	echo 'test2';
+  $field_name = 'dynamic_field_2';
+  
+    // Create the field.
+   $form['relations_fieldset'] = array(
+	 	 '#type' => 'fieldset',
+	 	 '#title' => t('mapping relations'),
+	 	 // Set up the wrapper so that AJAX will be able to replace the fieldset.
+	 	 '#prefix' => '<div id="relations-fieldset-wrapper">',
+	 	 '#suffix' => '</div>',
+	 	 );	   
+    field_create_field($form);
+
+    // Create the instance.
+    $instance = array( 'field_name3' => $form,
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'label' => 'test',
+      'description' => 'The test!',
+      'required' => TRUE,
+    );
+    field_create_instance($instance);
+}
+
+?>

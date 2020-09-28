@@ -1,0 +1,59 @@
+<?php
+
+
+function export_menu() {
+
+	$items['export'] = array(
+		'title' => 'Export data',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('export_basic'),
+		'access callback' => TRUE,
+	);
+	
+	return $items;
+}
+
+function export_basic($form, &$form){
+	
+	form_set_error('postal', t('test1'));
+	$datamodel= export_basic_populate_list();
+	
+	$form= array();
+
+	$form['datamodel1'] = array (
+					'#title' => t('Choose a datamodel'),
+					'#type' => 'select',
+					'#options' => $datamodel,
+					'#default_value' => 'default',			
+				);
+	
+	
+	$form['datamodel2'] = array (
+					'#title' => t('Choose the mapped datamodel'),
+					'#type' => 'select',
+					'#options' => $datamodel,
+					'#default_value' => 'default',
+					
+				);
+	
+	
+	
+			
+	return $form;	
+	}
+
+
+function export_basic_populate_list(){
+	form_set_error('postal', t('test2'));
+	$datamodel= db_query('SELECT mid,name FROM datamodels') ;
+	form_set_error('postal', t('test3'));
+	$options= array('0' => 'none');
+   	 	foreach ($datamodel as $item) {
+		  	$key = $item->mid;
+		  	$value = $item->name;
+		  	$options[$key] = $value;
+		  }
+		  form_set_error('postal', t('test3'));
+    return $options;
+}
+		  

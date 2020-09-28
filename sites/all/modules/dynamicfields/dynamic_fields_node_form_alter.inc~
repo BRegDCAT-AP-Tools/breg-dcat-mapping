@@ -1,0 +1,36 @@
+<?php
+
+echo 'form_alter';
+function dynamic_fields_form_node_form_alter(&$form, &$form_state, $form_id) {
+
+  $node = $form['#node'];
+  $form['dynamic_field_1'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('test 1'),
+    '#description' => t('test'),
+    '#default_value' => $node->dynamic_fields['example_1'],
+    '#ajax' => array(
+      'callback' => 'dynamic_fields_form_node_callback',
+      'wrapper' => 'dynamic-fields-form-node',
+      'effect' => 'fade',
+    ),
+  );
+  $form['container'] = array(
+    '#prefix' => '<div id="dynamic-fields-form-node">',
+    '#suffix' => '</div>',
+  );
+
+  // If the state values exist and 'ajax_example_1' state value is 1 or
+  // if the state values don't exist and 'example1' variable is 1 then
+  // display the ajax_example_2 field.
+ if (!empty($form_state['values']['dynamic_field_1']) && $form_state['values']['dynamic_field_1'] == 1
+      || empty($form_state['values']) && $node->dynamic_fields['example_1']) {
+
+    $form['container']['dynamic_field_2'] = array(
+      '#type' => 'textfield',
+      '#title' => t('AJAX Example 2'),
+      '#description' => t('AJAX Example 2'),
+      '#default_value' => empty($form_state['values']['dynamic_field_2']) ? $node->dynamic_fields['example_2'] : $form_state['values']['dynamic_field_2'],
+    );
+  }
+}

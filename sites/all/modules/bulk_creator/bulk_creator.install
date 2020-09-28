@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Bulk install file.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function bulk_creator_install() {
+  $t = get_t();
+  drupal_set_message($t('Bulk settings are available under !link', array(
+    '!link' => l($t('Configuration > Content Authoring > Bulk'), 'admin/config/content/bulk_creator'))
+  ));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function bulk_creator_uninstall() {
+  variable_del('bulk_creator_node_type');
+  variable_del('bulk_creator_node_type_new');
+  variable_del('bulk_creator_field_creator');
+  variable_del('bulk_creator_parse_script_callback');
+  variable_del('bulk_creator_separator_field');
+}

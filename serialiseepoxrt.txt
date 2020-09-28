@@ -1,0 +1,153 @@
+s:5434:"EasyRdf_Sparql_Result Object
+(
+    [type:EasyRdf_Sparql_Result:private] => bindings
+    [boolean:EasyRdf_Sparql_Result:private] => 
+    [ordered:EasyRdf_Sparql_Result:private] => 
+    [distinct:EasyRdf_Sparql_Result:private] => 
+    [fields:EasyRdf_Sparql_Result:private] => Array
+        (
+            [0] => s
+            [1] => o
+            [2] => p
+        )
+
+    [storage:ArrayIterator:private] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [s] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://mapping.semic.eu/def#DataModel
+                            [graph:protected] => 
+                        )
+
+                    [o] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+                            [graph:protected] => 
+                        )
+
+                    [p] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/2000/01/rdf-schema#Class
+                            [graph:protected] => 
+                        )
+
+                )
+
+            [1] => stdClass Object
+                (
+                    [s] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://mapping.semic.eu/def#DataModel
+                            [graph:protected] => 
+                        )
+
+                    [o] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+                            [graph:protected] => 
+                        )
+
+                    [p] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/2004/02/skos/core#Concept
+                            [graph:protected] => 
+                        )
+
+                )
+
+            [2] => stdClass Object
+                (
+                    [s] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => https://joinup.ec.europa.eu/asset/cpsv-ap/description
+                            [graph:protected] => 
+                        )
+
+                    [o] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+                            [graph:protected] => 
+                        )
+
+                    [p] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://mapping.semic.eu/def#DataModel
+                            [graph:protected] => 
+                        )
+
+                )
+
+            [3] => stdClass Object
+                (
+                    [s] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => to_edit_test
+                            [graph:protected] => 
+                        )
+
+                    [o] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+                            [graph:protected] => 
+                        )
+
+                    [p] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://mapping.semic.eu/def#DataModel
+                            [graph:protected] => 
+                        )
+
+                )
+
+            [4] => stdClass Object
+                (
+                    [s] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://mapping.semic.eu/def#DataModel
+                            [graph:protected] => 
+                        )
+
+                    [o] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+                            [graph:protected] => 
+                        )
+
+                    [p] => EasyRdf_Literal Object
+                        (
+                            [value:protected] => reusable data models that are defined, managed, promoted and maintained centrally to facilitate interoperability across different systems, applications and domains
+                            [lang:protected] => 
+                            [datatype:protected] => 
+                        )
+
+                )
+
+            [5] => stdClass Object
+                (
+                    [s] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://mapping.semic.eu/def#DataModel
+                            [graph:protected] => 
+                        )
+
+                    [o] => EasyRdf_Resource Object
+                        (
+                            [uri:protected] => http://www.w3.org/2000/01/rdf-schema#label
+                            [graph:protected] => 
+                        )
+
+                    [p] => EasyRdf_Literal Object
+                        (
+                            [value:protected] => Core Data Model
+                            [lang:protected] => 
+                            [datatype:protected] => 
+                        )
+
+                )
+
+        )
+
+)
+";

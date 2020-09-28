@@ -1,0 +1,782 @@
+<?php
+
+require 'vendor/autoload.php';
+
+//define menu
+function editmapping_menu() {
+
+	$items['editmappings'] = array(
+		'title' => 'Edit and export mappings',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('editmapping_basic'),
+		'access callback' => TRUE,
+	);
+	
+	return $items;	
+}
+
+//main function
+function editmapping_basic($form, &$form_state) {
+		  
+//populate lists
+	$datamodel_list = editmapping_basic_populate_list();
+	$dropdown_array = editmapping_basic_relations_list();
+	
+	//define the fields to pick the two datamodels
+	$form['datamodellist1'] = array (
+					'#title' => t('Choose a source datamodel to change the mappings'),
+					'#type' => 'select',
+					'#options' => $datamodel_list,
+					'#default_value' => 'default',	
+				);
+	
+	$form['datamodellist2'] = array (
+					'#title' => t('Choose a target datamodel to change the relations'),
+					'#type' => 'select',
+					'#options' => $datamodel_list,
+					'#default_value' => 'default',
+				);
+	
+	//wrapper
+	$form['wrapper_datamodels']['datamodel_fieldset1'] = array(
+		 '#type' => 'fieldset',
+	 	 '#title' => t('datamodel 1'),
+	 	 '#prefix' => '<div id="datamodel-fieldset1">',
+	 	 '#suffix' => '</div>',
+	 	 		);	
+	//wrapper
+	$form['wrapper_datamodels']['datamodel_fieldset2'] = array(
+		 '#type' => 'fieldset',
+	 	 '#title' => t('datamodel 2'),
+	 	 '#prefix' => '<div id="datamodel-fieldset2">',
+	 	 '#suffix' => '</div>',
+	 	 		);	  	 	 
+		 	
+	//fields of the datamodels, name & uri's
+			$form['wrapper_datamodels']['datamodel_fieldset1']['datamodel1'] = array (
+		  	  		'#title' => t('Name of the source datamodel'),
+					'#type' => 'textfield',
+					'#size' => '50',
+					
+					);
+			 $form['wrapper_datamodels']['datamodel_fieldset1']['URI1'] = array (
+		  	  		'#title' => t('URI'),
+					'#type' => 'textfield',
+					'#size' => '50',
+				);
+		  
+			
+			 $form['wrapper_datamodels']['datamodel_fieldset2']['datamodel2'] = array (
+		  	  		'#title' => t('Name of the target datamodel'),                                     
+					'#type' => 'textfield',
+					'#size' => '50',
+					
+					);
+			 
+			   $form['wrapper_datamodels']['datamodel_fieldset2']['URI2'] = array (
+							'#title' => t('URI'),
+							'#type' => 'textfield',
+							'#size' => '50',
+							
+							);
+	//checkbox to delete the selected datamodels & mappings
+	
+			    $form['wrapper_datamodels']['deletedatamodel'] = array (
+		  	  		'#type' => 'checkbox',
+		  	  		'#title' => t('delete datamodel and ALL relations'),
+		  	  		'#title_display' => 'before'
+				);		   
+	
+				//
+	$form['relations_fieldset'][$i]['labels']['deletemapping'] = array (
+		  	  		'#type' => 'checkbox',
+		  	  		'#title' => t('delete relation'),
+		  	  		'#title_display' => 'before'
+				);
+	//buttons to get the relations, 
+	$form['get_relations'] = array(
+				'#type' => 'submit',
+				'#submit' => array('editmapping_fillfields'),
+				'#value' => t('get relations'),
+				'#ajax' => array(
+					'event' => 'change',
+					'callback' => 'editmapping_add_more_callback',
+					'wrapper' => 'relations-fieldset-wrapper',
+					),
+				);
+	
+	$form['export_relations'] = array(
+				'#type' => 'submit',
+				'#submit' => array('editmapping_exportfields'),
+				'#value' => t('export relations'),
+				'#ajax' => array(
+					'event' => 'change',
+					'callback' => 'editmapping_add_more_callback',
+					'wrapper' => 'relations-fieldset-wrapper',
+					),
+				);
+	
+	   $form['#attached']['css'] = array(
+		  	  drupal_get_path('module', 'editmapping') . '/editmapping.css',
+		);
+	   
+	   //defining the headers for the other fields
+	   $form['#tree'] = TRUE;
+	   $form['relations_fieldset'] = array(
+	 	 '#type' => 'fieldset',
+	 	 '#title' => t('editmapping relations'),
+	 	 '#prefix' => '<div id="relations-fieldset-wrapper">',
+	 	 '#suffix' => '</div>',
+	 	 );	
+	   
+	   	$form['relations_fieldset']['labels']['dummylabelprobnotgoodpractice'] = array (
+		  	  		'#markup' => '<h1> </h1>',
+					);
+		
+		  $form['relations_fieldset']['labels']['source_class_label'] = array (
+		  	  		'#markup' => '<h1>Source Class</h1>',
+					);
+		  
+		  $form['relations_fieldset']['labels']['source_property_label'] = array (
+					'#markup' => '<h1>Source Property</h1>',
+					);
+		  
+		  $form['relations_fieldset']['labels']['relation_label'] = array (
+					'#markup' => '<h1>Relation</h1>',
+					);
+		  
+		  $form['relations_fieldset']['labels']['target_class_label'] = array (
+					'#markup' => '<h1>Target Class</h1>',
+					);
+		  
+		  $form['relations_fieldset']['labels']['target_property_label'] = array (
+					'#markup' => '<h1>Target Property</h1>',
+					);
+		  
+		  $form['relations_fieldset']['labels']['target_property_label'] = array (
+					'#markup' => '<h1>Target Property</h1>',
+					);
+		  
+		  $form['relations_fieldset']['labels']['syntax_editmapping_label'] = array (
+					'#markup' => '<h1>Syntax Mapping</h1>',
+					);
+	
+		  if (empty($form_state['num_relations'])) {
+		  	  $form_state['num_relations'] =0;
+		  }
+		  
+		  //defining the other fields
+		  for ($i = 0; $i < $form_state['num_relations']; $i++) {
+		  	  
+		  	  $form['relations_fieldset'][$i]['relationship_label'] = array (
+		  	  		'#markup' => '<h2>Relationships:</h2>',
+					);
+
+				$form['relations_fieldset'][$i]['source_class'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+/*					'#ajax' => array(
+						'event' => 'change',
+						'callback' => 'editmapping_generate_uri',
+						'wrapper' => 'relations-fieldset-wrapper',
+						'method' => 'replace',
+						),*/
+					);
+				
+				$form['relations_fieldset'][$i]['source_property'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+/*						'#ajax' => array(
+						'event' => 'change',
+						'callback' => 'editmapping_generate_uri',
+						'wrapper' => 'relations-fieldset-wrapper',
+						'method' => 'replace',
+						),*/
+					);
+								
+				$form['relations_fieldset'][$i]['relation'] = array (
+					'#type' => 'select',
+					 '#prefix'=> '<div class="editselect">',
+					 '#suffix' => '</div>',
+					'#options' => $dropdown_array,
+/*						'#ajax' => array(
+						'event' => 'change',
+						'callback' => 'editmapping_generate_uri',
+						'wrapper' => 'relations-fieldset-wrapper',
+						'method' => 'replace',
+						),*/
+					);
+				
+				$form['relations_fieldset'][$i]['target_class'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+/*						'#ajax' => array(
+						'event' => 'change',
+						'callback' => 'editmapping_generate_uri',
+						'wrapper' => 'relations-fieldset-wrapper',
+						'method' => 'replace',
+						),*/
+					
+					);
+				
+				$form['relations_fieldset'][$i]['target_property'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+/*						'#ajax' => array(
+						'event' => 'change',
+						'callback' => 'editmapping_generate_uri',
+						'wrapper' => 'relations-fieldset-wrapper',
+						'method' => 'replace',
+						), */
+					);
+				
+				$form['relations_fieldset'][$i]['syntax_mapping'] = array (
+					'#type' => 'checkbox',				
+					);		
+				
+				
+				$form['relations_fieldset'][$i]['uri_label'] = array (
+		  	  		'#markup' => '<h2>URIs: </h2>',
+					);
+				
+				
+					$form['relations_fieldset'][$i]['source_class_URI'] = array (
+					'#title_display'=> 'before',
+					'#type' => 'textfield',
+					'#size' => '10',
+					
+					);
+				
+				$form['relations_fieldset'][$i]['source_property_URI'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+					
+					);
+								
+				$form['relations_fieldset'][$i]['relation_URI'] = array (
+					'#type' => 'select',
+					'#size' => '10',
+					 '#attributes' => array('hidden' => 'hidden'),
+					 '#prefix'=> '<div class="editselect">',
+					 '#suffix' => '</div>'
+					);
+				
+				$form['relations_fieldset'][$i]['target_class_URI'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+					
+					);
+				
+				$form['relations_fieldset'][$i]['target_property_URI'] = array (
+					'#type' => 'textfield',
+					'#size' => '10',
+					
+					);
+				
+				$form['relations_fieldset'][$i]['labels']['deletemapping'] = array (
+		  	  		'#type' => 'checkbox',
+		  	  		'#title' => t('delete relation'),
+		  	  		'#title_display' => 'before'
+				);
+				
+				$form['relations_fieldset'][$i]['line'] = array (
+		  	  		'#markup' => '<div class="style1"></div>',
+				);
+
+			}
+			
+		/*	$form['generate_URI'] = array(
+				'#type' => 'submit',
+				'#value' => t('generate'),
+				'#submit' => array('editmapping_generate_uri'),
+				'#limit_validation_errors' => array(),
+				'#ajax' => array(
+					'callback' => 'editmapping_add_more_callback',
+					'wrapper' => 'relations-fieldset-wrapper',
+					),
+				);*/
+			
+		   $form['submit'] = array(
+			 '#type' => 'submit',
+			 '#value' => t('Submit'),	
+			 '#attributes' => array('onclick' => 'if(!confirm("are you sure you want to submit these changes?")){return false;}')
+			
+			 );
+		
+	
+	return $form;
+	
+}
+
+//populate the datamodel list
+function editmapping_basic_populate_list(){
+	
+	$databaselist= db_query('SELECT mid,name FROM datamodels') ;
+
+	$options= array('0' => '');
+   	 	foreach ($databaselist as $item) {
+		  	$key = $item->mid;
+		  	$value = $item->name;
+		  	$options[$key] = $value;
+		  }
+		  
+    return $options;
+}
+
+//force update
+function editmapping_add_more_callback($form, &$form_state) {
+	return $form['relations_fieldset'];
+}
+
+//populate the mapping list
+function editmapping_basic_relations_list() {
+	$voc_name = 'Skos_mappingRelation';
+	$myvoc = taxonomy_vocabulary_machine_name_load($voc_name);
+		  
+	$dropdown_source = taxonomy_get_tree($myvoc->vid);
+	
+	$dropdown_list = array('0' => '---none---');
+		  
+	foreach ($dropdown_source as $item) {
+		  $key = $item->tid;
+		  $value = $item->name;
+		  $dropdown_list[$key] = $value;
+	}
+		  
+	return $dropdown_list;
+}
+
+
+//retrieve relations from the database and display them
+function editmapping_fillfields($form, &$form_state){
+	
+	//get the selected datamodels
+	$datamodel1 =$form_state['complete form']['datamodellist1']['#options'][$form_state['values']['datamodellist1']];
+	$datamodel2 = $form_state['complete form']['datamodellist2']['#options'][$form_state['values']['datamodellist2']];
+	
+	//array to put the relations
+	$allrelations = array();
+
+	$relations = db_query('SELECT * FROM relations WHERE did1= :datamodel1 AND did2= :datamodel2', array(':datamodel1' => $datamodel1, ':datamodel2' => $datamodel2));
+	$datamodel1 = db_query('SELECT * FROM datamodels WHERE name= :datamodel1',array(':datamodel1' => $datamodel1));
+	$datamodel2 = db_query('SELECT * FROM datamodels WHERE name= :datamodel2',array(':datamodel2' => $datamodel2));	
+	$count= $relations->rowCount();
+	$form_state['num_relations']= $count;
+	
+	//fill fields datamodels
+	$row = $datamodel1-> fetchObject();
+	$form_state['input']['wrapper_datamodels']['datamodel_fieldset1']['datamodel1'] =$row-> name;
+	$form_state['input']['wrapper_datamodels']['datamodel_fieldset1']['URI1'] =$row-> uri;
+	
+	$row = $datamodel2-> fetchObject();
+ 	$form_state['input']['wrapper_datamodels']['datamodel_fieldset2']['datamodel2'] =$row-> name;
+ 	$form_state['input']['wrapper_datamodels']['datamodel_fieldset2']['URI2']=$row-> uri;
+ 	
+ 	//fill all relation fields
+	for($i=0; $i < $count ; $i++) {
+					
+		$row = $relations->fetchObject();
+		
+		$form_state['input']['relations_fieldset'][$i]['source_class'] = $row-> coreclass;
+		$form_state['input']['relations_fieldset'][$i]['source_class_URI'] = $row-> coreclassuri;
+		$form_state['input']['relations_fieldset'][$i]['source_property'] = $row-> coreproperty;
+		$form_state['input']['relations_fieldset'][$i]['source_property_URI'] = $row-> corepropertyuri;
+		
+		if($row->relation == "Close match") 
+			$form_state['input']['relations_fieldset'][$i]['relation'] = 1;
+		if($row->relation == "Exact match") 
+			$form_state['input']['relations_fieldset'][$i]['relation'] = 2;
+		if($row->relation == "Narrow match") 
+			$form_state['input']['relations_fieldset'][$i]['relation'] = 3;
+		if($row->relation == "Related match") 
+			$form_state['input']['relations_fieldset'][$i]['relation'] = 4;
+		if($row->relation == "Broad match") 
+			$form_state['input']['relations_fieldset'][$i]['relation'] = 5;
+		
+		$form_state['input']['relations_fieldset'][$i]['target_class'] = $row-> mappedclass;
+		$form_state['input']['relations_fieldset'][$i]['target_class_URI'] = $row-> mappedclassuri;
+		$form_state['input']['relations_fieldset'][$i]['target_property'] = $row->mappedproperty;
+		$form_state['input']['relations_fieldset'][$i]['target_property_URI'] = $row-> mappedpropertyuri;
+		
+		
+		unset($form_state['input']['relations_fieldset'][$i]['syntax_mapping']);
+		if($row-> synmap == '1') {
+			
+			$form_state['input']['relations_fieldset'][$i]['syntax_mapping'] = TRUE;
+		}
+		else{
+			$form_state['input']['relations_fieldset'][$i]['synmap'] = FALSE;
+		}
+	
+		$relationsrow = array (
+			'sourceclassuri' => $row-> coreclassuri,
+			'sourcepropertyuri' => $row-> corepropertyuri,
+			'relationuri' =>$row->relationuri,
+			'targetclassuri' =>$row-> mappedclassuri,
+			'targetpropertyuri' =>$row->mappedpropertyuri
+		);
+		
+		
+		$allrelations[] =$relationsrow;
+		
+	}
+	
+	
+	$_SESSION['allrelations'] = $allrelations;
+	
+	//rebuild
+	$form_state['rebuild']= TRUE;
+		return form_builder('form-wrapper', $form['relations_fieldset'], $form_state);
+	
+}
+
+//export relations
+
+function editmapping_exportfields($form, &$form_state) {
+	$datamodeluri1 =$form_state['values']['wrapper_datamodels']['datamodel_fieldset1']['URI1'];
+	$datamodeluri2 = $form_state['values']['wrapper_datamodels']['datamodel_fieldset2']['URI2'];
+	
+   drupal_set_message($datamodel1);
+    drupal_set_message('test');
+	
+		
+	//construct from triple store
+	//$query = "CONSTRUCT {?s ?p ?o}
+	//WHERE { GRAPH <http://cpsv-ap_mapping.eu> {?s ?p ?o}}";
+	
+	$query = "CONSTRUCT {?s ?p <".$datamodeluri1.">}
+	WHERE { GRAPH <http://cpsv-ap_mapping.eu> {?s ?p <".$datamodeluri1.">}}";
+	 drupal_set_message($query);
+	
+	$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+	
+	$ch = curl_init();
+	curl_setopt($ch,CURLOPT_URL,$searchUrl);
+	curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+	$response=curl_exec($ch);
+	curl_close($ch);	
+	
+	header("Content-Disposition: attachment; filename=\"export.rdf\"");
+	header("Content-Type: text/plain");
+	header("Content-Length: ".strlen($response));
+	echo $response;
+	exit;
+}
+	
+//resubmit the mapping that changed
+function editmapping_basic_submit($form, &$form_state) {
+	
+
+	$datamodel1 =$form_state['complete form']['datamodellist1']['#options'][$form_state['values']['datamodellist1']];
+	$datamodel1uri = $form_state['values']['wrapper_datamodels']['datamodel_fieldset1']['URI1'];
+	
+	$datamodel2 = $form_state['complete form']['datamodellist2']['#options'][$form_state['values']['datamodellist2']];
+	$datamodel2uri = $form_state['values']['wrapper_datamodels']['datamodel_fieldset2']['URI2'];
+	
+	$deletedatamodel = $form_state['values']['wrapper_datamodels']['deletedatamodel'];
+	
+ 	$data =$_SESSION['allrelations'];
+ 	
+ 	//delete old relations & datamodels
+	db_query('DELETE FROM relations WHERE did1= :datamodel1 AND did2= :datamodel2', array(':datamodel1' => $datamodel1, ':datamodel2' => $datamodel2));
+	
+	$datamodel1empty = db_query('SELECT * FROM relations WHERE did1= :datamodel1 OR did2= :datamodel1', array(':datamodel1' => $datamodel1));
+	$datamodel2empty = db_query('SELECT * FROM relations WHERE did1= :datamodel2 OR did2= :datamodel2', array(':datamodel2' => $datamodel2));
+	
+	db_query('DELETE FROM datamodels WHERE name= :datamodel1',array(':datamodel1' => $datamodel1));
+	db_query('DELETE FROM datamodels WHERE name= :datamodel2',array(':datamodel2' => $datamodel2));
+	
+	//insert changes to datamodels
+	if($deletedatamodel == TRUE){
+		if($datamodel1empty->rowCount() == 0  ){
+			drupal_set_message( $datamodel1.' was deleted'); 
+			
+		}else{ 	
+			
+		db_insert('datamodels')
+			->fields(array(
+				'name' => $datamodel1,
+				'uri' => $datamodel1uri,
+				))->execute();
+      drupal_set_message( $datamodel1.' was not deleted as it is still used in other mappings');
+			
+		}
+	
+		if($datamodel2empty->rowCount() == 0 ){
+			drupal_set_message( $datamodel2.' was deleted'); 
+		}else{
+			
+			db_insert('datamodels')
+			->fields(array(
+			  'name' => $datamodel2,
+			  'uri' => $datamodel2uri,
+			  ))->execute();
+      drupal_set_message( $datamodel2.' was not deleted as it is still used in other mappings');
+		}
+	}
+ 	
+ 	
+ 	if( $deletedatamodel == FALSE) {
+	db_insert('datamodels')
+    ->fields(array(
+      'name' => $datamodel1,
+      'uri' => $datamodel1uri,
+      ))->execute();
+    }
+    
+    if( $deletedatamodel== FALSE) {
+	db_insert('datamodels')
+    ->fields(array(
+      'name' => $datamodel2,
+      'uri' => $datamodel2uri,
+      ))->execute();
+    }
+    
+    	//insert changes to relations
+	for($i = 0; $i < $form_state['num_relations']; $i++){
+ 		
+	$sourceclass= $form_state['values']['relations_fieldset'][$i]['source_class'];
+ 	$sourceclassuri=$form_state['values']['relations_fieldset'][$i]['source_class_URI'];
+	$sourceproperty=$form_state['values']['relations_fieldset'][$i]['source_property'];
+	$sourcepropertyuri=$form_state['values']['relations_fieldset'][$i]['source_property_URI'];
+	$relation= $form_state['complete form']['relations_fieldset'][$i]['relation']['#options'][$form_state['values']['relations_fieldset'][$i]['relation']];
+	
+	if($relation=='Exact match')
+		$relationuri='skos:exactMatch';
+	if($relation=='Close match')
+		$relationuri='skos:closeMatch';
+	if($relation=='Narrow match')
+		$relationuri='skos:narrowMatch';
+	if($relation=='Broad match')
+		$relationuri='skos:broadMatch';
+	if($relation=='Related match')
+		$relationuri='skos:relatedMatch';
+		
+	$targetclass= $form_state['values']['relations_fieldset'][$i]['target_class'];
+	$targetclassuri= $form_state['values']['relations_fieldset'][$i]['target_class_URI'];
+	$targetproperty= $form_state['values']['relations_fieldset'][$i]['target_property'];
+	$targetpropertyuri= $form_state['values']['relations_fieldset'][$i]['target_property_URI'];
+	$synmap= $form_state['values']['relations_fieldset'][$i]['syntax_mapping'];
+	$deletemapping= $form_state['values']['relations_fieldset'][$i]['labels']['deletemapping'];
+ 	
+	if($deletedatamodel == FALSE && $deletemapping==FALSE ) {
+	db_insert('relations')
+    ->fields(array(
+    	
+      'did1' => $datamodel1,
+      'did2' => $datamodel2,
+      'coreclass' =>$sourceclass, 
+      'coreclassuri' => $sourceclassuri,
+      'coreproperty' =>$sourceproperty,
+      'corepropertyuri' =>$sourcepropertyuri,
+      'relation' =>$relation,
+      'relationuri' =>$relationuri,
+      'mappedclass' =>$targetclass,
+      'mappedclassuri' =>$targetclassuri,
+      'mappedproperty' =>  $targetproperty,
+      'mappedpropertyuri' =>  $targetpropertyuri,
+      'synmap' =>$synmap,
+      ))->execute();
+    }
+    
+	
+//update triplestore by replacing the old triples with the changed triples
+    if(easyrdf()){  
+  	//the $endpoint should point to the correct address
+		$endpoint= 'http://http://devit:48890//sparql';
+		$gs = new EasyRdf_Sparql_Client($endpoint);
+		
+		$oldvalue = $data[$i]['sourceclassuri'];
+ 	if($data[$i]['sourceclassuri'] != $sourceclassuri){
+ 		//update source class
+ 	$query = 'MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {<'.$oldvalue.'> ?p ?o}
+				INSERT {<'.$sourceclassuri.'> ?p ?o}
+				WHERE {<'.$oldvalue.'> ?p ?o}
+				
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s <'.$oldvalue.'>  ?o}
+				INSERT {?s <'.$sourceclassuri.'>  ?o}
+				WHERE {?s <'.$oldvalue.'>  ?o}
+				
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s ?p <'.$oldvalue.'>}
+				INSERT {?s ?p <'.$sourceclassuri.'>}
+				WHERE {?s ?p <'.$oldvalue.'>}';
+ 
+	$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+
+	$ch = curl_init();
+	curl_setopt($ch,CURLOPT_URL,$searchUrl);
+	curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+	$response=curl_exec($ch);
+	curl_close($ch);
+	
+	}
+ 	
+	
+ 	if($data[$i]['sourcepropertyuri'] != $sourcepropertyuri){
+ 		//update source property
+ 		$oldvalue = $data[$i]['sourcepropertyuri'];
+ 		
+ 		$query=	'MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {<'.$oldvalue.'> ?p ?o}
+				INSERT {<'.$sourcepropertyuri.'> ?p ?o}
+				WHERE {<'.$oldvalue.'> ?p ?o}
+				
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s <'.$oldvalue.'>  ?o}
+				INSERT {?s <'.$sourcepropertyuri.'>  ?o}
+				WHERE {?s <'.$oldvalue.'>  ?o}
+				
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s ?p <'.$oldvalue.'>}
+				INSERT {?s ?p <'.$sourcepropertyuri.'>}
+				WHERE {?s ?p <'.$oldvalue.'>}';
+			
+						
+		$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$searchUrl);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		$response=curl_exec($ch);
+		curl_close($ch);
+ 	}
+ 	//update relations
+ 	
+ 	if($data[$i]['relationuri'] != $relationuri){
+ 		$oldvalue = $data[$i]['relationuri'];
+ 		
+ 		$query ='MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {<'.$oldvalue.'> ?p ?o}
+				INSERT {<'.$relationuri.'> ?p ?o}
+				WHERE {<'.$oldvalue.'> ?p ?o}
+				
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s <'.$oldvalue.'>  ?o}
+				INSERT {?s <'.$relationuri.'>  ?o}
+				WHERE {?s <'.$oldvalue.'>  ?o}
+			
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s ?p <'.$oldvalue.'>}
+				INSERT {?s ?p <'.$relationuri.'>}
+				WHERE {?s ?p <'.$oldvalue.'>}';
+				
+		$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$searchUrl);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		$response=curl_exec($ch);
+		curl_close($ch);
+ 	}
+ 	
+ 	if($data[$i]['targetclassuri'] != $targetclassuri){
+ 		$oldvalue = $data[$i]['targetclassuri'];
+ 			//update target class
+ 		$query ='MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {<'.$oldvalue.'> ?p ?o}
+				INSERT {<'.$targetclassuri.'> ?p ?o}
+				WHERE {<'.$oldvalue.'> ?p ?o}
+			
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s <'.$oldvalue.'>  ?o}
+				INSERT {?s <'.$targetclassuri.'>  ?o}
+				WHERE {?s <'.$oldvalue.'>  ?o}
+				
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s ?p <'.$oldvalue.'>}
+				INSERT {?s ?p <'.$targetclassuri.'>}
+				WHERE {?s ?p <'.$oldvalue.'>}';
+		
+		
+		$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$searchUrl);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		$response=curl_exec($ch);
+		curl_close($ch);
+ 	}
+ 	
+ 	if($data[$i]['targetpropertyuri'] != $targetpropertyuri){
+ 		$oldvalue = $data[$i]['targetpropertyuri'];
+ 			//update target property
+ 		$query ='MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {<'.$oldvalue.'> ?p ?o}
+				INSERT {<'.$targetpropertyuri.'> ?p ?o}
+				WHERE {<'.$oldvalue.'> ?p ?o}
+		
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s <'.$oldvalue.'>  ?o}
+				INSERT {?s <'.$targetpropertyuri.'>  ?o}
+				WHERE {?s <'.$oldvalue.'>  ?o}
+
+				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				DELETE {?s ?p <'.$oldvalue.'>}
+				INSERT {?s ?p <'.$targetpropertyuri.'>}
+				WHERE {?s ?p <'.$oldvalue.'>}';
+				
+		$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$searchUrl);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		$response=curl_exec($ch);
+		curl_close($ch);
+			
+ 	}
+ 
+ 	//DELETE MAPPING IN TRIPLE STORE 
+
+ 	if($deletemapping == TRUE){
+ 		//delete targetproperty
+
+ 		$oldsourceclassuri = $data[$i]['sourceclassuri'];
+ 		$oldtargetclassuri = $data[$i]['targetclassuri'];
+ 		
+ 			$query =
+			'DELETE WHERE {
+ 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					{<'.$oldsourceclassuri.'> ?p <'.$oldtargetclassuri.'>}}
+ 			DELETE WHERE {
+ 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					{<'.$sourceclassuri.'> ?p <'.$targetclassuri.'> }}';
+ 					
+ 		
+		$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$searchUrl);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		$response=curl_exec($ch);
+		curl_close($ch);
+		
+ 		//sourceproperty
+ 		$oldsourceproperty = $data[$i]['sourcepropertyuri'];
+ 		$oldtargetproperty = $data[$i]['targetpropertyuri'];
+ 		
+ 		$query=
+			'DELETE WHERE {
+ 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					{<'.$oldsourceproperty.'> ?p <'.$oldtargetproperty.'>}}
+ 			DELETE WHERE {
+ 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					{<'.$sourcepropertyuri.'> ?p <'.$targetpropertyuri.'> }}';
+ 		
+ 					
+		$searchUrl = 'http://http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+	
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL,$searchUrl);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		$response=curl_exec($ch);
+		curl_close($ch);
+ 					
+ 				
+ 				
+ 		}
+ 		}
+ 	}
+ 	
+ 	
+}
