@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: bregdcat-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 43306:3306    
+    volumes:
+      - "./mysql/dcat-database-init.sql:/docker-entrypoint-initdb.d/z_dcat-database-init.sql"
+      - "./volumes/mysql/:/var/lib/mysql/"
+
+  mapping_tool:
+    build: ./mapping_tool
+    image: bregdcat_cpsv-mapping_tool:0.01
+    container_name: bregdcat-mapping_tool
+    ports:
+      - 40081:80
+    links:
+      - mysql
+    restart: unless-stopped
+    volumes:
+      - "./volumes/mapping_tool/sites/:/var/www/html/sites/"
+      
+
