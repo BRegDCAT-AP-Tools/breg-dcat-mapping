@@ -13,8 +13,9 @@ This application has configured to launch a [docker](https://www.docker.com/) co
 
     $ cd path_to_mapping
     $ docker-compose up --build
-    
+
+The application can be accessed on http://localhost:40081/
 
 ### Local deployment 
 
-This application is based on [drupal](https://www.drupal.com). This projects contains an installation and an initial database (dcat-editor-database.sql). Follow the Drupal's [documentation](http://drupal.org/documentation) to congfigure an Drupal project.
+This application is based on [drupal](https://www.drupal.com). This projects contains an installation and an initial database (dcat-mapping-database.sql). Follow the Drupal's [documentation](http://drupal.org/documentation) to congfigure an Drupal project.
