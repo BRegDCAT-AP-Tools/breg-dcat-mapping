@@ -178,8 +178,8 @@
     $value_trail3 = "3";
     if ($result == 3):$value_trail3 = "last";endif;
   ?>
-  <div id="column-context" class="clearfix <?php print $value; ?>">
-    <div id="column-wrapper" class="clearfix <?php print $value; ?>">
+  <div id="column-context" class="clearfix">
+    <div id="column-wrapper" class="clearfix">
       <?php if($col1title || $col1): ?>
         <div class="column <?php print $value_trail1; ?>">
           <?php if($col1title): ?>
