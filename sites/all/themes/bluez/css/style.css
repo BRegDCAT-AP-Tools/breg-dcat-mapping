@@ -390,7 +390,9 @@ h4 a {
 /* Menu Navigation
 /*-------------------------------------------*/
 #navigation {
-  float: right;
+  float: left;
+  width: 100%;
+  clear: both;
   margin: 20px auto 0px;
   font-size: 14px;
   font-weight: 500;
@@ -1337,4 +1339,13 @@ h3.comment-title a {
 
 .edit {
 	float:right;
+}
+
+
+.views-field-edit-node > span > a {
+  color:#FFF !important;
+}
+
+.page-mapped-relations .view-content {
+	overflow-x: scroll;
 }

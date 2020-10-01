@@ -11,11 +11,11 @@ services:
     ports:
       - 43306:3306    
     volumes:
-      - "./mysql/dcat-database-init.sql:/docker-entrypoint-initdb.d/z_dcat-database-init.sql"
+      - "./dcat-mapping-database.sql:/docker-entrypoint-initdb.d/z_dcat-database-init.sql"
       - "./volumes/mysql/:/var/lib/mysql/"
 
   mapping_tool:
-    build: ./mapping_tool
+    build: .
     image: bregdcat_cpsv-mapping_tool:0.01
     container_name: bregdcat-mapping_tool
     ports:
@@ -23,7 +23,14 @@ services:
     links:
       - mysql
     restart: unless-stopped
-    volumes:
-      - "./volumes/mapping_tool/sites/:/var/www/html/sites/"
-      
 
+  virtuoso:
+    image: tenforce/virtuoso:virtuoso7.2.4
+    container_name: bregdcat-virtuoso
+    environment:
+      SPARQL_UPDATE: 'true'
+      DEFAULT_GRAPH: 'http://data.ctic.es'
+    ports:
+      - '48890:8890'
+    volumes:
+      - ./volumes/virtuoso:/data

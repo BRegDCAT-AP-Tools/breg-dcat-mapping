@@ -1,5 +1,0 @@
-name= Edit Mapping tool
-description= edit mapping tool 
-core= 7.x
-package= Custom
-stylesheets[all][] = editmapping.css
