@@ -576,7 +576,7 @@ function CPSVAPmapping_basic_submit($form, &$form_state) {
         //store in triplestore with easyrdf
         if(easyrdf()){
             //the $endpoint should point to the correct address
-            $endpoint= 'http://devit:48890//sparql-graph-crud';
+            $endpoint= 'http://virtuoso:8890/sparql-graph-crud';
             $gs = new EasyRdf_GraphStore($endpoint);
             $graph1 = new EasyRdf_Graph();
 

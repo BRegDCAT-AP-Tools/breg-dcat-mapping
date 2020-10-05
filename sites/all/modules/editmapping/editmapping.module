@@ -676,7 +676,7 @@ function editmapping_basic_submit($form, &$form_state) {
 //update triplestore by replacing the old triples with the changed triples
     if(easyrdf()){  
   	//the $endpoint should point to the correct address
-		$endpoint= 'http://devit:48890//sparql';
+		$endpoint= 'http://virtuoso:8890/sparql';
 		$gs = new EasyRdf_Sparql_Client($endpoint);
 		
 		$oldvalue = $data[$i]['sourceclassuri'];
@@ -697,7 +697,7 @@ function editmapping_basic_submit($form, &$form_state) {
 				INSERT {?s ?p <'.$sourceclassuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
  
-	$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+	$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 
 	$ch = curl_init();
 	curl_setopt($ch,CURLOPT_URL,$searchUrl);
@@ -728,7 +728,7 @@ function editmapping_basic_submit($form, &$form_state) {
 				WHERE {?s ?p <'.$oldvalue.'>}';
 			
 						
-		$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 		
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$searchUrl);
@@ -756,7 +756,7 @@ function editmapping_basic_submit($form, &$form_state) {
 				INSERT {?s ?p <'.$relationuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
 				
-		$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 		
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$searchUrl);
@@ -784,7 +784,7 @@ function editmapping_basic_submit($form, &$form_state) {
 				WHERE {?s ?p <'.$oldvalue.'>}';
 		
 		
-		$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$searchUrl);
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
@@ -810,7 +810,7 @@ function editmapping_basic_submit($form, &$form_state) {
 				INSERT {?s ?p <'.$targetpropertyuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
 				
-		$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$searchUrl);
@@ -837,7 +837,7 @@ function editmapping_basic_submit($form, &$form_state) {
  					{<'.$sourceclassuri.'> ?p <'.$targetclassuri.'> }}';
  					
  		
-		$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$searchUrl);
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
@@ -857,7 +857,7 @@ function editmapping_basic_submit($form, &$form_state) {
  					{<'.$sourcepropertyuri.'> ?p <'.$targetpropertyuri.'> }}';
  		
  					
-		$searchUrl = 'http://devit:48890//sparql?'.'query='.urlencode($query).'&format=rdf';
+		$searchUrl = 'http://virtuoso:8890/sparql?'.'query='.urlencode($query).'&format=rdf';
 	
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_URL,$searchUrl);

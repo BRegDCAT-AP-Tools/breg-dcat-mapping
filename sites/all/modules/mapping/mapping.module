@@ -688,7 +688,7 @@ function mapping_basic_submit($form, &$form_state) {
       //store stuff in triplestore with easyrdf
 if(easyrdf()){
 		//the $endpoint should point to the correct address --> this is hardcoded, needs to be changed in later versions to be configurable
-		$endpoint= 'http://devit:48890//sparql-graph-crud';
+		$endpoint= 'http://virtuoso:8890/sparql-graph-crud';
  		$gs = new EasyRdf_GraphStore($endpoint);
  		$graph1 = new EasyRdf_Graph();
  		//datamodel definition

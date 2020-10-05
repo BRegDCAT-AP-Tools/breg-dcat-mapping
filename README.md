@@ -17,7 +17,8 @@ The application can be then accessed on http://localhost:40081/
 
 ### Local deployment 
 
-The tool is based on [Drupal](https://www.drupal.com). This projects contains an installation guide and an initial database dump (`dcat-mapping-database.sql`). Follow Drupal's [documentation](http://drupal.org/documentation) to configure a Drupal project.
+The tool is based on [Drupal](https://www.drupal.com). Follow Drupal's [documentation](http://drupal.org/documentation) to configure a Drupal project.
+
 
 The requirements and service dependencies for the local environment are:
 
@@ -27,6 +28,12 @@ To deploy the Public Service Description Editor locally, the administration will
 * PHP 5.6.
 * Drupal 7.42.
 * Virtuoso triple store.
+
+
+This projects contains an installation guide and an initial database dump (`dcat-mapping-database.sql`) only valid for Drupal deployment. In this database has some configurations thahth must be modified to work in other enviroments:
+
+* ARC2 store settings -> admin/config/services/arc2_store at Drupal configuration
+* SPARQL Endpoints Registry -> admin/structure/sparql_registry at Drupal configuration
 
 ## Virtuoso
 
