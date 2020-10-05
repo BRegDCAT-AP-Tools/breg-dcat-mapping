@@ -21,3 +21,7 @@ The application can be accessed on http://localhost:40081/
 This application is based on [drupal](https://www.drupal.com). This projects contains an installation and an initial database (dcat-mapping-database.sql). Follow the Drupal's [documentation](http://drupal.org/documentation) to configure an Drupal project.
 
 To deploy the Public Service Description Editor locally, the administration will require PHP and Drupal environments installed on their webserver. The PHP version used is 5.6.15; the Drupal version is 7.42. Finally, a Virtuoso Triple store is needed to store the data created by the users.
+
+## Virtuoso
+
+Virtuoso endpoints is hardcoded un CPSVAPmapping module in /sites/all/modules/ folder. Review this URL and adapt to your instalation.
