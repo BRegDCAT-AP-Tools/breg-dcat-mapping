@@ -59,4 +59,4 @@ Modifying the configuration of the **Virtuoso triple store** would require repla
 Once the Drupal application is up and running please make sure to also update the SPARQL endpoint in the following configuration pages:
 
 * *ARC2 store settings*: `admin/config/services/arc2_store`
-* *SPARQL Endpoints Registry*: `admin/structure/sparql_registry at Drupal configuration`
+* *SPARQL Endpoints Registry*: `admin/structure/sparql_registry`
