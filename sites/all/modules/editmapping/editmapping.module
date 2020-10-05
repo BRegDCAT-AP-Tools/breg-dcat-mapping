@@ -465,7 +465,7 @@ function editmapping_exportfields($form, &$form_state) {
 		// if relation between classes, write rdf:Description element
 		if(empty($form_state['values']['relations_fieldset'][$i]['source_property_URI'])) {
 			$response .= '
-		<rdf:Description rdf:about="http://cpsv-ap_mapping.eu/';
+		<rdf:Description rdf:about="http://breg-dcat-ap_mapping.eu/';
 			$response .= $i;
 			$response .= '">
 			<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#mappingRelation"/>
@@ -485,7 +485,7 @@ function editmapping_exportfields($form, &$form_state) {
 		// if relation between properties, write rdf:Description element
 		} else {
 			$response .= '
-		<rdf:Description rdf:about="http://cpsv-ap_mapping.eu/';
+		<rdf:Description rdf:about="http://breg-dcat-ap_mapping.eu/';
 			$response .= $i;
 			$response .= '">
 			<rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#mappingRelation"/>
@@ -682,17 +682,17 @@ function editmapping_basic_submit($form, &$form_state) {
 		$oldvalue = $data[$i]['sourceclassuri'];
  	if($data[$i]['sourceclassuri'] != $sourceclassuri){
  		//update source class
- 	$query = 'MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+ 	$query = 'MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {<'.$oldvalue.'> ?p ?o}
 				INSERT {<'.$sourceclassuri.'> ?p ?o}
 				WHERE {<'.$oldvalue.'> ?p ?o}
 				
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s <'.$oldvalue.'>  ?o}
 				INSERT {?s <'.$sourceclassuri.'>  ?o}
 				WHERE {?s <'.$oldvalue.'>  ?o}
 				
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s ?p <'.$oldvalue.'>}
 				INSERT {?s ?p <'.$sourceclassuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
@@ -712,17 +712,17 @@ function editmapping_basic_submit($form, &$form_state) {
  		//update source property
  		$oldvalue = $data[$i]['sourcepropertyuri'];
  		
- 		$query=	'MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+ 		$query=	'MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {<'.$oldvalue.'> ?p ?o}
 				INSERT {<'.$sourcepropertyuri.'> ?p ?o}
 				WHERE {<'.$oldvalue.'> ?p ?o}
 				
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s <'.$oldvalue.'>  ?o}
 				INSERT {?s <'.$sourcepropertyuri.'>  ?o}
 				WHERE {?s <'.$oldvalue.'>  ?o}
 				
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s ?p <'.$oldvalue.'>}
 				INSERT {?s ?p <'.$sourcepropertyuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
@@ -741,17 +741,17 @@ function editmapping_basic_submit($form, &$form_state) {
  	if($data[$i]['relationuri'] != $relationuri){
  		$oldvalue = $data[$i]['relationuri'];
  		
- 		$query ='MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+ 		$query ='MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {<'.$oldvalue.'> ?p ?o}
 				INSERT {<'.$relationuri.'> ?p ?o}
 				WHERE {<'.$oldvalue.'> ?p ?o}
 				
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s <'.$oldvalue.'>  ?o}
 				INSERT {?s <'.$relationuri.'>  ?o}
 				WHERE {?s <'.$oldvalue.'>  ?o}
 			
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s ?p <'.$oldvalue.'>}
 				INSERT {?s ?p <'.$relationuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
@@ -768,17 +768,17 @@ function editmapping_basic_submit($form, &$form_state) {
  	if($data[$i]['targetclassuri'] != $targetclassuri){
  		$oldvalue = $data[$i]['targetclassuri'];
  			//update target class
- 		$query ='MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+ 		$query ='MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {<'.$oldvalue.'> ?p ?o}
 				INSERT {<'.$targetclassuri.'> ?p ?o}
 				WHERE {<'.$oldvalue.'> ?p ?o}
 			
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s <'.$oldvalue.'>  ?o}
 				INSERT {?s <'.$targetclassuri.'>  ?o}
 				WHERE {?s <'.$oldvalue.'>  ?o}
 				
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s ?p <'.$oldvalue.'>}
 				INSERT {?s ?p <'.$targetclassuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
@@ -795,17 +795,17 @@ function editmapping_basic_submit($form, &$form_state) {
  	if($data[$i]['targetpropertyuri'] != $targetpropertyuri){
  		$oldvalue = $data[$i]['targetpropertyuri'];
  			//update target property
- 		$query ='MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+ 		$query ='MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {<'.$oldvalue.'> ?p ?o}
 				INSERT {<'.$targetpropertyuri.'> ?p ?o}
 				WHERE {<'.$oldvalue.'> ?p ?o}
 		
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s <'.$oldvalue.'>  ?o}
 				INSERT {?s <'.$targetpropertyuri.'>  ?o}
 				WHERE {?s <'.$oldvalue.'>  ?o}
 
-				MODIFY GRAPH <http://cpsv-ap_mapping.eu>
+				MODIFY GRAPH <http://breg-dcat-ap_mapping.eu>
 				DELETE {?s ?p <'.$oldvalue.'>}
 				INSERT {?s ?p <'.$targetpropertyuri.'>}
 				WHERE {?s ?p <'.$oldvalue.'>}';
@@ -830,10 +830,10 @@ function editmapping_basic_submit($form, &$form_state) {
  		
  			$query =
 			'DELETE WHERE {
- 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					GRAPH <http://breg-dcat-ap_mapping.eu>
  					{<'.$oldsourceclassuri.'> ?p <'.$oldtargetclassuri.'>}}
  			DELETE WHERE {
- 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					GRAPH <http://breg-dcat-ap_mapping.eu>
  					{<'.$sourceclassuri.'> ?p <'.$targetclassuri.'> }}';
  					
  		
@@ -850,10 +850,10 @@ function editmapping_basic_submit($form, &$form_state) {
  		
  		$query=
 			'DELETE WHERE {
- 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					GRAPH <http://breg-dcat-ap_mapping.eu>
  					{<'.$oldsourceproperty.'> ?p <'.$oldtargetproperty.'>}}
  			DELETE WHERE {
- 					GRAPH <http://cpsv-ap_mapping.eu>
+ 					GRAPH <http://breg-dcat-ap_mapping.eu>
  					{<'.$sourcepropertyuri.'> ?p <'.$targetpropertyuri.'> }}';
  		
  					

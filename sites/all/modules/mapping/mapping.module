@@ -720,7 +720,7 @@ if(easyrdf()){
  			$graph1->addResource($sourcepropertyuri, 'http://purl.org/dc/terms/isPartOf', $sourceclassuri);
  			$graph1->addResource($targetpropertyuri, 'http://purl.org/dc/terms/isPartOf', $targetclassuri);
  		}		
- 		$gs->insert($graph1, 'http://cpsv-ap_mapping.eu');
+ 		$gs->insert($graph1, 'http://breg-dcat-ap_mapping.eu');
 	}
  }
  
