@@ -17,24 +17,46 @@ The application can be then accessed on http://localhost:40081/
 
 ### Local deployment 
 
-The tool is based on [Drupal](https://www.drupal.com). Follow Drupal's [documentation](http://drupal.org/documentation) to configure a Drupal project.
-
+The tool is based on [Drupal](https://www.drupal.com), please see Drupal's [documentation](http://drupal.org/documentation) for more information.
 
 The requirements and service dependencies for the local environment are:
-
-To deploy the Public Service Description Editor locally, the administration will require PHP and Drupal environments installed on their webserver. The PHP version used is 5.6.15; the Drupal version is 7.42. Finally, a Virtuoso Triple store is needed to store the data created by the users.
-
 
 * PHP 5.6.
 * Drupal 7.42.
 * Virtuoso triple store.
+* MySQL.
 
+The configuration of the **MySQL database** can be modified in `sites/default/settings.php`. It points to the `mysql` hostname of the container defined in the Compose file by default:
 
-This projects contains an installation guide and an initial database dump (`dcat-mapping-database.sql`) only valid for Drupal deployment. In this database has some configurations thahth must be modified to work in other enviroments:
+```
+...
 
-* ARC2 store settings -> admin/config/services/arc2_store at Drupal configuration
-* SPARQL Endpoints Registry -> admin/structure/sparql_registry at Drupal configuration
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'dcat-mapping',
+      'username' => 'root',
+      'password' => 'root',
+      'host' => 'mysql',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
+);
 
-## Virtuoso
+...
+```
 
-Virtuoso endpoints is hardcoded in CPSVAPmapping and editmapping modules in /sites/all/modules/ folder. Review this URL and adapt to your instalation.
+Modifying the configuration of the **Virtuoso triple store** would require replacing all hardcoded references to the `virtuoso` hostname in:
+
+* `sites/all/modules/CPSVAPmapping/CPSVAPmapping.module`
+* `sites/all/modules/editmapping/editmapping.module`
+* `sites/all/modules/mapping/mapping.module`
+
+Once the Drupal application is up and running please make sure to also update the SPARQL endpoint in the following configuration pages:
+
+* *ARC2 store settings*: `admin/config/services/arc2_store`
+* *SPARQL Endpoints Registry*: `admin/structure/sparql_registry`

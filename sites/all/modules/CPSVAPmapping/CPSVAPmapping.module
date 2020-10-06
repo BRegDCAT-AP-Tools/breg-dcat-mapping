@@ -639,7 +639,7 @@ function CPSVAPmapping_basic_submit($form, &$form_state)
                 $graph1->addResource($sourcepropertyuri, $relationuri, $targetpropertyuri);
             }
 
-            $gs->insert($graph1, 'http://cpsv-ap_mapping.eu');
+            $gs->insert($graph1, 'http://breg-dcat-ap_mapping.eu');
         }
     }
 
