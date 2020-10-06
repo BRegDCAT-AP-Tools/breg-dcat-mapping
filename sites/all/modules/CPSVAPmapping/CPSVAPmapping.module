@@ -78,7 +78,7 @@ function CPSVAPmapping_basic($form, &$form_state)
     $form['#tree'] = true;
     $form['relations_fieldset'] = array(
         '#type' => 'fieldset',
-        '#title' => t('CPSVAPmapping relations'),
+        '#title' => t('BRegDCAT-AP v2 relations'),
         '#prefix' => '<div id="relations-fieldset-wrapper">',
         '#suffix' => '</div>',
     );

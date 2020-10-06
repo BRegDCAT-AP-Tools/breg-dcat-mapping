@@ -1,5 +1,5 @@
-name= CPSV Mapping tool
-description= CPSV mapping tool 
+name= BRegDCAT-AP v2 mapping tool
+description= BRegDCAT-AP v2 mapping tool 
 core= 7.x
 package= Custom
 stylesheets[all][] = CPSVAPmapping.css
