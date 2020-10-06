@@ -660,8 +660,6 @@ function mapping_basic_submit($form, &$form_state)
         if ($targetproperty != '') {
             $targetpropertyuri = $form_state['values']['relations_fieldset'][$i]['target_property_URI'];
 		}
-		
-		
 
         $synmap = $form_state['values']['relations_fieldset'][$i]['syntax_mapping'];
 
@@ -724,85 +722,12 @@ function mapping_basic_submit($form, &$form_state)
                 $graph1->addResource($sourcepropertyuri, 'http://purl.org/dc/terms/isPartOf', $sourceclassuri);
                 $graph1->addResource($targetpropertyuri, 'http://purl.org/dc/terms/isPartOf', $targetclassuri);
             }
-            $gs->insert($graph1, 'http://cpsv-ap_mapping.eu');
+            $gs->insert($graph1, 'http://breg-dcat-ap_mapping.eu');
         }
     }
 
     drupal_set_message('Mapping submitted');
 
-<<<<<<< HEAD
-=======
-		$synmap= $form_state['values']['relations_fieldset'][$i]['syntax_mapping'];
-
-	
-		//store them in database	
-		db_insert('relations')
-    ->fields(array(
-      'did1' => $datamodel1,
-      'did2' => $datamodel2,
-      'coreclass' =>$sourceclass, 
-      'coreclassuri' => $sourceclassuri,
-      'coreproperty' =>$sourceproperty,
-      'corepropertyuri' =>$sourcepropertyuri,
-      'relation' =>$relation,
-      'relationuri' =>$relationuri,
-      'mappedclass' =>$targetclass,
-      'mappedclassuri' =>$targetclassuri,
-      'mappedproperty' =>  $targetproperty,
-      'mappedpropertyuri' =>  $targetpropertyuri,
-      'synmap' =>$synmap,
-      ))->execute();
-    
-      
-  $datamodelURI1	= preg_replace('/\s+/', '', $datamodelURI1);
-  $datamodelURI2	= preg_replace('/\s+/', '', $datamodelURI2);
-  $sourcepropertyuri= preg_replace('/\s+/', '', $sourcepropertyuri);
-  $targetpropertyuri= preg_replace('/\s+/', '', $targetpropertyuri);
-  $sourceclassuri	= preg_replace('/\s+/', '', $sourceclassuri);
-  $targetclassuri	= preg_replace('/\s+/', '', $targetclassuri);
-          
-      //store stuff in triplestore with easyrdf
-if(easyrdf()){
-		//the $endpoint should point to the correct address --> this is hardcoded, needs to be changed in later versions to be configurable
-		$endpoint= 'http://virtuoso:8890/sparql-graph-crud';
- 		$gs = new EasyRdf_GraphStore($endpoint);
- 		$graph1 = new EasyRdf_Graph();
- 		//datamodel definition
- 		
- 		$graph1->addResource('http://mapping.semic.eu/def#DataModel', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2000/01/rdf-schema#Class');
- 		$graph1->addResource('http://mapping.semic.eu/def#DataModel', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2004/02/skos/core#Concept');
- 		$graph1->add('http://mapping.semic.eu/def#DataModel', 'http://www.w3.org/2000/01/rdf-schema#label', "Core Data Model");
- 		$graph1->add('http://mapping.semic.eu/def#DataModel', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', "reusable data models that are defined, managed, promoted and maintained centrally to facilitate interoperability across different systems, applications and domains"); 
- 		
- 		//datamodel, classes & properties
- 		$graph1->addResource($datamodelURI1, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://mapping.semic.eu/def#DataModel');
- 		$graph1->addResource($datamodelURI2, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://mapping.semic.eu/def#DataModel');
- 		if($sourcepropertyuri!=''){
- 		$graph1->addResource($sourcepropertyuri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Property');
- 		}
- 		if($targetpropertyuri!=''){
- 		$graph1->addResource($targetpropertyuri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Property');
- 		}
- 		$graph1->addResource($sourceclassuri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2000/01/rdf-schema#Class');
- 		$graph1->addResource($targetclassuri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2000/01/rdf-schema#Class');
- 		 
- 		//ispartof
- 		 
- 		if($sourceproperty =='' && $targetpropertyuri ==''){
- 			$graph1->addResource($sourceclassuri,$relationuri, $targetclassuri); 
- 		}
- 		else{
- 			$graph1->addResource($sourcepropertyuri,$relationuri, $targetpropertyuri);
- 			$graph1->addResource($sourcepropertyuri, 'http://purl.org/dc/terms/isPartOf', $sourceclassuri);
- 			$graph1->addResource($targetpropertyuri, 'http://purl.org/dc/terms/isPartOf', $targetclassuri);
- 		}		
- 		$gs->insert($graph1, 'http://breg-dcat-ap_mapping.eu');
-	}
- }
- 
- 	drupal_set_message('Mapping submitted');
-	 	
->>>>>>> 8d736c0085b0136e6170037f7a04722bd665373b
 }
 
 //populate list of datamodels
