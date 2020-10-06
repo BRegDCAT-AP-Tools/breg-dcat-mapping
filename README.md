@@ -37,4 +37,4 @@ This projects contains an installation guide and an initial database dump (`dcat
 
 ## Virtuoso
 
-Virtuoso endpoints is hardcoded un CPSVAPmapping module in /sites/all/modules/ folder. Review this URL and adapt to your instalation.
+Virtuoso endpoints is hardcoded in CPSVAPmapping and editmapping modules in /sites/all/modules/ folder. Review this URL and adapt to your instalation.
